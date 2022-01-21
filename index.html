@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>방탈 예약, 언제부터지?</title>
     <style>
         .hide {
             display: none;
         }
         #reserveDateTime {
             font-weight: bold;
+        }
+        .input {
+            height: 2em;
+            width: 90%;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
@@ -17,13 +21,16 @@
     <div>
         <label>
             매장
-            <select id="selectCafe" onchange="calcReserveDate()"></select>
+            <br/>
+            <select id="selectCafe" class="input" onchange="calcReserveDate()"></select>
         </label>
     </div>
     <div>
         <label>
             희망일
+            <br/>
             <input id="inputVisitDate" type="date"
+                   class="input"
                    onchange="calcReserveDate()">
         </label>
     </div>
@@ -103,11 +110,18 @@
 				.minute(0)
 				.subtract(selectedCafe.periodDay || 7, 'day');
 
-			spanReserveDateTime.innerText = selectedCafe.specificTime
-                ? reserveDate.format('YYYY년 MM월 DD일\n정해진 시각에 대기하세요\n(매장 홈페이지 참고)')
-                : reserveDate.subtract('10', 'minute')
-				    .format('10분 전인\nYYYY년 MM월 DD일 HH시 mm분\n부터 대기하세요');
+        	if (reserveDate.isBefore(dayjs())) {
+        		setReverveInfo('지금 바로 예약 가능합니다!');
+        		return;
+            }
+
+        	setReverveInfo(selectedCafe.specificTime
+				? reserveDate.format('YYYY년 MM월 DD일\n정해진 시각에 대기하세요\n(매장 홈페이지 참고)')
+				: reserveDate.subtract('10', 'minute')
+					.format('10분 전인\nYYYY년 MM월 DD일 HH시 mm분\n부터 대기하세요'));
         };
+
+        const setReverveInfo = (message) => spanReserveDateTime.innerText = message;
     </script>
 </body>
 </html>
