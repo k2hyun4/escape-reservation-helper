@@ -110,9 +110,11 @@
 				.minute(0)
 				.subtract(selectedCafe.periodDay || 7, 'day');
 
-        	const diffDay = reserveDate.isBefore(dayjs(), 'day');
+        	const diffDay = dayjs().startOf('day')
+                .diff(reserveDate, 'day');
+        	console.log(diffDay);
 
-        	if (diffDay > 1 || (diffDay === 1 && selectedCafe.specificTime)) {
+        	if (diffDay > 0 || (diffDay === 0 && !selectedCafe.specificTime)) {
         		setReverveInfo('지금 바로 예약 가능합니다!');
         		return;
             }
