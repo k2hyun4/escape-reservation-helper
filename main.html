@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hide {
+            display: none;
+        }
+        #reserveDateTime {
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+</head>
+<body>
+    <div>
+        <label>
+            매장
+            <select id="selectCafe" onchange="calcReserveDate()"></select>
+        </label>
+    </div>
+    <div>
+        <label>
+            희망일
+            <input id="inputVisitDate" type="date"
+                   onchange="calcReserveDate()">
+        </label>
+    </div>
+
+    <div id="wrapReserveInfo" class="hide">
+        <p id="reserveDateTime"></p>
+    </div>
+
+    <script>
+        const cafes = [
+            {
+                name: '키이스케이프',
+                specificTime: true
+            },
+			{
+				name: '비트포비아-던전' ,
+				specificTime: true
+			},
+            {
+            	name: '제로월드',
+                periodDay: 15
+            },
+			{
+				name: '비밀의 화원',
+                etc: '다운타운 홍대, 미드나잇 합정, 리버타운 강남, 시네마틱 혜화'
+            },
+			{
+				name: '룸즈에이',
+                periodDay: 31
+            },
+			{
+				name: '소우주',
+                periodDay: 5
+            },
+			{ name: '포인트나인' },
+			{ name: '황금열쇠' },
+            { name: '판타스트릭' },
+            { name: '도어이스케이프' },
+			{
+				name: '넥스트에디션-건대 보네르관',
+				periodDay: 8
+			},
+			{
+				name: '마스터키',
+				periodDay: 14
+			},
+            { name : '1주 단위로 열리는 매장'},
+            {
+            	name : '2주 단위로 열리는 매장',
+                periodDay: 14
+            },
+        ];
+
+        const wrapReserveInfo = document.getElementById('wrapReserveInfo');
+        const selectCafe = document.getElementById('selectCafe');
+        const inputVisitDate = document.getElementById('inputVisitDate');
+        const spanReserveDateTime = document.getElementById('reserveDateTime');
+
+        window.onload = () => {
+            cafes.forEach(cafe => {
+            	const option = document.createElement('option');
+            	option.text = cafe.name;
+            	selectCafe.options.add(option);
+            });
+            inputVisitDate.setAttribute('min', dayjs().format('YYYY-MM-DD'));
+        };
+
+        const calcReserveDate = () => {
+        	const selectedDate = inputVisitDate.value;
+        	if (!selectedDate) return;
+
+        	const selectedCafe = cafes[selectCafe.selectedIndex];
+        	wrapReserveInfo.classList.remove('hide');
+
+        	const reserveDate = dayjs(selectedDate)
+				.hour(24)
+				.minute(0)
+				.subtract(selectedCafe.periodDay || 7, 'day');
+
+			spanReserveDateTime.innerText = selectedCafe.specificTime
+                ? reserveDate.format('YYYY년 MM월 DD일\n정해진 시각에 대기하세요\n(매장 홈페이지 참고)')
+                : reserveDate.subtract('10', 'minute')
+				    .format('10분 전인\nYYYY년 MM월 DD일 HH시 mm분\n부터 대기하세요');
+        };
+    </script>
+</body>
+</html>
