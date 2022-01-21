@@ -77,13 +77,14 @@
 				name: '마스터키',
 				periodDay: 14
 			},
-            { name : '1주 단위로 열리는 매장'},
+            { name : '7일 후까지 열리는 매장'},
             {
-            	name : '2주 단위로 열리는 매장',
+            	name : '14일 후까지 열리는 매장',
                 periodDay: 14
             },
         ];
 
+        const DEFAULT_PERIOD_DAY = 7;
         const wrapReserveInfo = document.getElementById('wrapReserveInfo');
         const selectCafe = document.getElementById('selectCafe');
         const inputVisitDate = document.getElementById('inputVisitDate');
@@ -92,7 +93,7 @@
         window.onload = () => {
             cafes.forEach(cafe => {
             	const option = document.createElement('option');
-            	option.text = cafe.name;
+            	option.text = `${cafe.name} (${cafe.periodDay || DEFAULT_PERIOD_DAY}일 후까지)`;
             	selectCafe.options.add(option);
             });
             inputVisitDate.setAttribute('min', dayjs().format('YYYY-MM-DD'));
@@ -108,24 +109,23 @@
         	const reserveDate = dayjs(selectedDate)
 				.hour(24)
 				.minute(0)
-				.subtract(selectedCafe.periodDay || 7, 'day');
+				.subtract(selectedCafe.periodDay || DEFAULT_PERIOD_DAY, 'day');
 
         	const diffDay = dayjs().startOf('day')
                 .diff(reserveDate, 'day');
-        	console.log(diffDay);
 
         	if (diffDay > 0 || (diffDay === 0 && !selectedCafe.specificTime)) {
-        		setReverveInfo('지금 바로 예약 가능합니다!');
+        		setReserveInfo('지금 바로 예약 가능합니다!');
         		return;
             }
 
-        	setReverveInfo(selectedCafe.specificTime
+        	setReserveInfo(selectedCafe.specificTime
 				? reserveDate.format('YYYY년 MM월 DD일\n정해진 시각에 대기하세요\n(매장 홈페이지 참고)')
 				: reserveDate.subtract('10', 'minute')
 					.format('10분 전인\nYYYY년 MM월 DD일 HH시 mm분\n부터 대기하세요'));
         };
 
-        const setReverveInfo = (message) => spanReserveDateTime.innerText = message;
+        const setReserveInfo = (message) => spanReserveDateTime.innerText = message;
     </script>
 </body>
 </html>
